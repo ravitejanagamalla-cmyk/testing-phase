@@ -1,0 +1,29 @@
+
+<!DOCTYPE html><html><head>
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="card">
+<h2>Login / Signup</h2>
+<input id="email" placeholder="Email">
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="signup()">Signup</button>
+</div>
+<script>
+function signup(){
+ let users = JSON.parse(localStorage.getItem("users")||"{}");
+ if(users[email.value]){ alert("User already exists"); return; }
+ users[email.value] = {password: pass.value};
+ localStorage.setItem("users", JSON.stringify(users));
+ alert("Account created. Login now.");
+}
+function login(){
+ let users = JSON.parse(localStorage.getItem("users")||"{}");
+ if(!users[email.value]){ alert("User not found"); return; }
+ if(users[email.value].password !== pass.value){ alert("Wrong password"); return; }
+ localStorage.setItem("session", email.value);
+ location.href="dashboard.html";
+}
+</script>
+</body></html>
