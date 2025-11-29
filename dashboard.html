@@ -1,35 +1,48 @@
-
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html>
+<head>
 <title>Dashboard</title>
 <link rel="stylesheet" href="style.css">
-</head><body>
+</head>
+<body>
 <div class="card">
-<h2>SOC Entry-level Jobs</h2>
-<div id="jobs">Loading...</div>
+<h2>Hourly Updated SOC Jobs (India)</h2>
+<div id="jobs">Loading jobs…</div>
 <button onclick="logout()">Logout</button>
 </div>
+
 <script>
 if(!localStorage.getItem("session")) location.href="index.html";
 
 async function loadJobs(){
- // Placeholder job list; you can connect to Supabase later
- let jobs = [
-  {title:"SOC Analyst L1", company:"TCS", location:"Hyderabad", url:"#"},
-  {title:"Security Analyst", company:"Infosys", location:"Bangalore", url:"#"}
- ];
- document.getElementById("jobs").innerHTML = jobs.map(j=>`
-   <div class='job'>
-     <b>${j.title}</b><br>
-     ${j.company} — ${j.location}<br>
-     <a href='${j.url}' target='_blank'>Apply</a>
-   </div>
- `).join("");
+  try {
+    let res = await fetch("jobs.json?cache=" + Date.now());
+    let jobs = await res.json();
+
+    if (!Array.isArray(jobs) || jobs.length === 0) {
+      jobsDiv.innerHTML = "<p>No jobs yet. Auto-update runs every hour.</p>";
+      return;
+    }
+
+    document.getElementById("jobs").innerHTML = jobs.map(j => `
+      <div class='job'>
+        <b>${j.title}</b><br>
+        ${j.company} — ${j.location}<br>
+        <a href='${j.url}' target='_blank'>Apply</a>
+      </div>
+    `).join("");
+  } catch {
+    document.getElementById("jobs").innerHTML = "Error loading jobs.";
+  }
 }
+
 loadJobs();
 
 function logout(){
- localStorage.removeItem("session");
- location.href="index.html";
+  localStorage.removeItem("session");
+  location.href = "index.html";
 }
 </script>
-</body></html>
+
+</body>
+</html>
